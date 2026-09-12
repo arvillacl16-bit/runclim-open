@@ -75,13 +75,13 @@ T106 = Resolution.T106
 T127 = Resolution.T127
 T170 = Resolution.T170
 
-def heightmaptosra(imagepath: str, surfpath: str, maxelev: float, resolution: Resolution = T21):
+def heightmaptosra(imagepath: str, surfpath: str, maxelev: float, gravity: float = 9.81, resolution: Resolution = T21):
     from PIL import Image
     from scipy.ndimage import zoom
     topo = Image.open(imagepath).convert('L')
     topo_array = np.array(topo).astype(float)
     land_array = np.where(topo_array > 0, 1., 0.)
-    topo_array *= 255 * maxelev / topo_array.max()
+    topo_array *= maxelev * gravity / topo_array.max()
     scale = resolution / topo_array.shape[1]
     downscaled_topo = zoom(topo_array, (scale, scale), order=1)
     downscaled_land = zoom(land_array, (scale, scale), order=1)
